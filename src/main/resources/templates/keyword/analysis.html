@@ -40,7 +40,10 @@
 
 <br>
 
-<button type="button">관심 키워드 추가</button>
+<form action="/favorites" method="post">
+    <input type="hidden" name="keyword" th:value="${keyword}">
+    <button type="submit">관심 키워드 추가</button>
+</form>
 
 <script th:inline="javascript">
     const trendData = [[${trendDataList}]];

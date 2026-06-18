@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>관심 키워드 | K-Trend Tracker</title>
+</head>
+<body>
+<h1>관심 키워드</h1>
+
+<nav>
+    <a href="/">홈</a>
+    <a href="/keyword/analysis">키워드 분석</a>
+    <a href="/keyword/compare">키워드 비교</a>
+    <a href="/favorites">관심 키워드</a>
+    <a href="/history">검색 기록</a>
+    <a href="/mypage">마이페이지</a>
+</nav>
+
+<hr>
+
+<form action="/favorites" method="post">
+    <input type="text" name="keyword" placeholder="키워드 입력" required>
+    <button type="submit">키워드 추가</button>
+</form>
+
+<table border="1">
+    <thead>
+    <tr>
+        <th>키워드</th>
+        <th>추가일</th>
+        <th>관리</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="favorite : ${favorites}">
+        <td th:text="${favorite.keyword.keywordName}">아이폰</td>
+        <td th:text="${#temporals.format(favorite.createdAt, 'yyyy-MM-dd HH:mm')}">2026-06-18</td>
+        <td>
+            <a th:href="@{/keyword/analysis(keyword=${favorite.keyword.keywordName})}">분석하기</a>
+
+            <form action="/favorites/delete" method="post" style="display:inline;">
+                <input type="hidden" name="keyword" th:value="${favorite.keyword.keywordName}">
+                <button type="submit">삭제</button>
+            </form>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+</body>
+</html>
