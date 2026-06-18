@@ -1,8 +1,9 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>키워드 비교 | K-Trend Tracker</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 <h1>키워드 비교</h1>
@@ -18,7 +19,65 @@
 
 <hr>
 
-<p>키워드 비교 화면은 다음 단계에서 구현 예정입니다.</p>
+<form action="/keyword/compare" method="get">
+    <label>비교할 키워드</label>
+    <input type="text" name="keywords" th:value="${keywords}" placeholder="예: 아이폰,갤럭시,손흥민">
+    <button type="submit">비교하기</button>
+</form>
+
+<p>쉼표(,)로 구분해서 여러 키워드를 입력하세요.</p>
+
+<h2>비교 결과</h2>
+
+<canvas id="compareChart" width="900" height="400"></canvas>
+
+<script th:inline="javascript">
+    const compareData = [[${compareData}]];
+
+    const colors = [
+        'rgb(54, 162, 235)',
+        'rgb(255, 99, 132)',
+        'rgb(255, 205, 86)',
+        'rgb(75, 192, 192)',
+        'rgb(153, 102, 255)'
+    ];
+
+    const keywordNames = Object.keys(compareData);
+
+    let labels = [];
+
+    if (keywordNames.length > 0) {
+        labels = compareData[keywordNames[0]].map(item => item.trendDate);
+    }
+
+    const datasets = keywordNames.map((keyword, index) => {
+        return {
+            label: keyword,
+            data: compareData[keyword].map(item => item.interestValue),
+            borderColor: colors[index % colors.length],
+            borderWidth: 2,
+            tension: 0.3
+        };
+    });
+
+    const ctx = document.getElementById('compareChart');
+
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: datasets
+        },
+        options: {
+            scales: {
+                y: {
+                    min: 0,
+                    max: 100
+                }
+            }
+        }
+    });
+</script>
 
 </body>
 </html>
