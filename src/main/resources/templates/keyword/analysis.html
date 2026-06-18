@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>키워드 분석 | K-Trend Tracker</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+<h1>키워드 분석</h1>
+
+<nav>
+    <a href="/">홈</a>
+    <a href="/keyword/analysis">키워드 분석</a>
+    <a href="/keyword/compare">키워드 비교</a>
+    <a href="/favorites">관심 키워드</a>
+    <a href="/history">검색 기록</a>
+    <a href="/mypage">마이페이지</a>
+</nav>
+
+<hr>
+
+<form action="/keyword/analysis" method="get">
+    <input type="text" name="keyword" th:value="${keyword}" placeholder="키워드를 입력하세요">
+    <button type="submit">검색</button>
+</form>
+
+<h2 th:text="${keyword} + ' 검색 관심도 추이'">검색 관심도 추이</h2>
+
+<div>
+    <button>7일</button>
+    <button>30일</button>
+    <button>90일</button>
+    <button>1년</button>
+    <button>직접선택</button>
+</div>
+
+<br>
+
+<canvas id="trendChart" width="800" height="400"></canvas>
+
+<br>
+
+<button type="button">관심 키워드 추가</button>
+
+<script th:inline="javascript">
+    const trendData = [[${trendDataList}]];
+
+    const labels = trendData.map(item => item.trendDate);
+    const values = trendData.map(item => item.interestValue);
+
+    const ctx = document.getElementById('trendChart');
+
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: '검색 관심도',
+                data: values,
+                borderWidth: 2,
+                tension: 0.3
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    min: 0,
+                    max: 100
+                }
+            }
+        }
+    });
+</script>
+
+</body>
+</html>
