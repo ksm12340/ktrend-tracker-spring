@@ -23,6 +23,7 @@ public class TrendService {
 
     private final KeywordRepository keywordRepository;
     private final TrendDataRepository trendDataRepository;
+    private final NaverDatalabService naverDatalabService;
 
     private static final int MAX_SAMPLE_DAYS = 365;
     private static final List<String> POPULAR_KEYWORD_POOL = List.of(
@@ -59,6 +60,16 @@ public class TrendService {
                 searchStartDate = searchEndDate;
                 searchEndDate = temp;
             }
+        }
+
+        List<TrendData> naverTrendDataList = naverDatalabService.getTrendData(
+                keyword,
+                searchStartDate,
+                searchEndDate
+        );
+
+        if (!naverTrendDataList.isEmpty()) {
+            return naverTrendDataList;
         }
 
         return trendDataRepository.findByKeywordAndTrendDateBetweenOrderByTrendDateAsc(
