@@ -1,5 +1,7 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <title>K-Trend Tracker</title>
@@ -31,13 +33,13 @@
     <button type="submit">검색</button>
 </form>
 
-<h2>인기 키워드</h2>
-<ul>
-    <li>아이폰</li>
-    <li>손흥민</li>
-    <li>AI</li>
-    <li>부산 여행</li>
-</ul>
+    <h2>인기 키워드</h2>
+    <ul class="keyword-list">
+        <li th:each="popularKeyword : ${popularKeywords}">
+            <a th:href="@{/keyword/analysis(keyword=${popularKeyword})}"
+               th:text="${popularKeyword}">아이폰</a>
+        </li>
+    </ul>
 
 <div>
     <span sec:authorize="isAuthenticated()">

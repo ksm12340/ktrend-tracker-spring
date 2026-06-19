@@ -22,18 +22,32 @@
 
 <form action="/keyword/analysis" method="get">
     <input type="text" name="keyword" th:value="${keyword}" placeholder="키워드를 입력하세요">
+    <input type="hidden" name="period" th:value="${period}">
     <button type="submit">검색</button>
 </form>
 
 <h2 th:text="${keyword} + ' 검색 관심도 추이'">검색 관심도 추이</h2>
 
-<div>
-    <button>7일</button>
-    <button>30일</button>
-    <button>90일</button>
-    <button>1년</button>
-    <button>직접선택</button>
-</div>
+<form action="/keyword/analysis" method="get" class="period-form">
+    <input type="hidden" name="keyword" th:value="${keyword}">
+
+    <button type="submit" name="period" value="7d"
+            th:classappend="${period == '7d'} ? 'active'">7일</button>
+    <button type="submit" name="period" value="30d"
+            th:classappend="${period == '30d'} ? 'active'">30일</button>
+    <button type="submit" name="period" value="90d"
+            th:classappend="${period == '90d'} ? 'active'">90일</button>
+    <button type="submit" name="period" value="1y"
+            th:classappend="${period == '1y'} ? 'active'">1년</button>
+
+    <div class="custom-period">
+        <input type="date" name="startDate" th:value="${startDate}">
+        <span>~</span>
+        <input type="date" name="endDate" th:value="${endDate}">
+        <button type="submit" name="period" value="custom"
+                th:classappend="${period == 'custom'} ? 'active'">직접선택</button>
+    </div>
+</form>
 
 <br>
 
