@@ -1,5 +1,7 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <title>키워드 분석 | K-Trend Tracker</title>
@@ -7,15 +9,30 @@
     <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-<h1>키워드 분석</h1>
+<nav class="top-nav">
+    <div class="nav-inner">
+        <div class="nav-left">
+            <a href="/" class="logo">K-Trend Tracker</a>
 
-<nav>
-    <a href="/">홈</a>
-    <a href="/keyword/analysis">키워드 분석</a>
-    <a href="/keyword/compare">키워드 비교</a>
-    <a href="/favorites">관심 키워드</a>
-    <a href="/history">검색 기록</a>
-    <a href="/mypage">마이페이지</a>
+            <div class="nav-menu">
+                <a href="/">홈</a>
+                <a href="/keyword/analysis">키워드 분석</a>
+                <a href="/keyword/compare">키워드 비교</a>
+                <a href="/favorites">관심 키워드</a>
+                <a href="/history">검색 기록</a>
+                <a href="/mypage">마이페이지</a>
+            </div>
+        </div>
+
+        <div class="nav-auth">
+            <a sec:authorize="isAnonymous()" href="/login" class="auth-btn login-btn">로그인</a>
+            <a sec:authorize="isAnonymous()" href="/join" class="auth-btn join-btn">회원가입</a>
+
+            <form sec:authorize="isAuthenticated()" action="/logout" method="post" class="logout-form">
+                <button type="submit" class="auth-btn logout-btn">로그아웃</button>
+            </form>
+        </div>
+    </div>
 </nav>
 
 <hr>
