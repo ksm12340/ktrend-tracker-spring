@@ -23,7 +23,32 @@
 <form action="/keyword/compare" method="get">
     <label>비교할 키워드</label>
     <input type="text" name="keywords" th:value="${keywords}" placeholder="예: 아이폰,갤럭시,손흥민">
+    <input type="hidden" name="period" th:value="${period}">
     <button type="submit">비교하기</button>
+</form>
+
+<form action="/keyword/compare" method="get" class="period-form">
+    <input type="hidden" name="keywords" th:value="${keywords}">
+
+    <button type="submit" name="period" value="7d"
+            th:classappend="${period == '7d'} ? 'active'">7일</button>
+
+    <button type="submit" name="period" value="30d"
+            th:classappend="${period == '30d'} ? 'active'">30일</button>
+
+    <button type="submit" name="period" value="90d"
+            th:classappend="${period == '90d'} ? 'active'">90일</button>
+
+    <button type="submit" name="period" value="1y"
+            th:classappend="${period == '1y'} ? 'active'">1년</button>
+
+    <div class="custom-period">
+        <input type="date" name="startDate" th:value="${startDate}">
+        <span>~</span>
+        <input type="date" name="endDate" th:value="${endDate}">
+        <button type="submit" name="period" value="custom"
+                th:classappend="${period == 'custom'} ? 'active'">직접선택</button>
+    </div>
 </form>
 
 <p>쉼표(,)로 구분해서 입력하세요. 비교는 최대 5개까지만 가능합니다.</p>
@@ -37,11 +62,11 @@
     const compareData = [[${compareData}]];
 
     const colors = [
-        'rgb(54, 162, 235)',
-        'rgb(255, 99, 132)',
-        'rgb(255, 205, 86)',
-        'rgb(75, 192, 192)',
-        'rgb(153, 102, 255)'
+        '#03c75a',
+        '#2563eb',
+        '#f97316',
+        '#a855f7',
+        '#ef4444'
     ];
 
     const keywordNames = Object.keys(compareData);

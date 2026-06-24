@@ -33,7 +33,7 @@
         <td th:text="${history.keyword.keywordName}">아이폰</td>
         <td th:text="${#temporals.format(history.searchedAt, 'yyyy-MM-dd HH:mm')}">2026-06-18 21:00</td>
         <td>
-            <a th:href="@{/keyword/analysis(keyword=${history.keyword.keywordName})}">돋보기</a>
+            <a th:href="@{/keyword/analysis(keyword=${history.keyword.keywordName})}">보기</a>
         </td>
         <td>
             <form action="/history/delete" method="post">

@@ -12,6 +12,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -37,10 +38,7 @@ public class NaverDatalabService {
         try {
             String apiUrl = "https://openapi.naver.com/v1/datalab/search";
 
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_JSON);
-            headers.set("X-Naver-Client-Id", clientId);
-            headers.set("X-Naver-Client-Secret", clientSecret);
+            HttpHeaders headers = createHeaders();
 
             Map<String, Object> requestBody = Map.of(
                     "startDate", startDate.toString(),
@@ -63,8 +61,8 @@ public class NaverDatalabService {
                     request,
                     String.class
             );
+
             System.out.println("네이버 데이터랩 API 응답 성공");
-            System.out.println(response.getBody());
 
             JsonNode root = objectMapper.readTree(response.getBody());
             JsonNode results = root.path("results");
@@ -94,5 +92,101 @@ public class NaverDatalabService {
         }
 
         return trendDataList;
+    }
+
+    public List<String> getPopularKeywords(
+            List<String> candidateKeywords,
+            LocalDate startDate,
+            LocalDate endDate,
+            int limit
+    ) {
+        if (clientId.isBlank() || clientSecret.isBlank()) {
+            return new ArrayList<>();
+        }
+
+        List<String> keywords = candidateKeywords.stream()
+                .filter(keyword -> keyword != null && !keyword.isBlank())
+                .map(String::trim)
+                .distinct()
+                .limit(5)
+                .toList();
+
+        if (keywords.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        try {
+            String apiUrl = "https://openapi.naver.com/v1/datalab/search";
+
+            HttpHeaders headers = createHeaders();
+
+            List<Map<String, Object>> keywordGroups = new ArrayList<>();
+
+            for (String keyword : keywords) {
+                keywordGroups.add(Map.of(
+                        "groupName", keyword,
+                        "keywords", List.of(keyword)
+                ));
+            }
+
+            Map<String, Object> requestBody = Map.of(
+                    "startDate", startDate.toString(),
+                    "endDate", endDate.toString(),
+                    "timeUnit", "date",
+                    "keywordGroups", keywordGroups
+            );
+
+            HttpEntity<Map<String, Object>> request = new HttpEntity<>(requestBody, headers);
+
+            RestTemplate restTemplate = new RestTemplate();
+            ResponseEntity<String> response = restTemplate.exchange(
+                    apiUrl,
+                    HttpMethod.POST,
+                    request,
+                    String.class
+            );
+
+            JsonNode root = objectMapper.readTree(response.getBody());
+            JsonNode results = root.path("results");
+
+            Map<String, Double> scoreMap = new HashMap<>();
+
+            for (JsonNode result : results) {
+                String keywordName = result.path("title").asText();
+                JsonNode dataArray = result.path("data");
+
+                double totalScore = 0;
+                int count = 0;
+
+                for (JsonNode data : dataArray) {
+                    totalScore += data.path("ratio").asDouble();
+                    count++;
+                }
+
+                double averageScore = count == 0 ? 0 : totalScore / count;
+                scoreMap.put(keywordName, averageScore);
+            }
+
+            System.out.println("네이버 데이터랩 인기 키워드 점수 = " + scoreMap);
+
+            return scoreMap.entrySet().stream()
+                    .sorted(Map.Entry.<String, Double>comparingByValue().reversed())
+                    .limit(limit)
+                    .map(Map.Entry::getKey)
+                    .toList();
+
+        } catch (Exception e) {
+            System.out.println("네이버 데이터랩 인기 키워드 조회 실패");
+            e.printStackTrace();
+            return new ArrayList<>();
+        }
+    }
+
+    private HttpHeaders createHeaders() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("X-Naver-Client-Id", clientId);
+        headers.set("X-Naver-Client-Secret", clientSecret);
+        return headers;
     }
 }
