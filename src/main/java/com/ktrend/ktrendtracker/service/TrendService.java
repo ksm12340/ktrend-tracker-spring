@@ -23,6 +23,7 @@ public class TrendService {
 
     private final KeywordRepository keywordRepository;
     private final TrendDataRepository trendDataRepository;
+    private final NaverDatalabService naverDatalabService;
 
     private static final int MAX_SAMPLE_DAYS = 365;
     private static final List<String> POPULAR_KEYWORD_POOL = List.of(
@@ -61,6 +62,16 @@ public class TrendService {
             }
         }
 
+        List<TrendData> naverTrendDataList = naverDatalabService.getTrendData(
+                keyword,
+                searchStartDate,
+                searchEndDate
+        );
+
+        if (!naverTrendDataList.isEmpty()) {
+            return naverTrendDataList;
+        }
+
         return trendDataRepository.findByKeywordAndTrendDateBetweenOrderByTrendDateAsc(
                 keyword,
                 searchStartDate,
@@ -69,6 +80,37 @@ public class TrendService {
     }
 
     public List<String> getPopularKeywords() {
+        LocalDate endDate = LocalDate.now().minusDays(1);
+        LocalDate startDate = endDate.minusDays(6);
+
+        List<String> candidateKeywords = getRotatedPopularKeywordCandidates();
+
+        List<String> naverPopularKeywords = naverDatalabService.getPopularKeywords(
+                candidateKeywords,
+                startDate,
+                endDate,
+                5
+        );
+
+        if (!naverPopularKeywords.isEmpty()) {
+            return naverPopularKeywords;
+        }
+
+        return getFallbackPopularKeywords();
+    }
+
+    private List<String> getRotatedPopularKeywordCandidates() {
+        List<String> candidates = new ArrayList<>(POPULAR_KEYWORD_POOL);
+
+        long seed = LocalDateTime.now().getDayOfYear() * 100L + LocalDateTime.now().getHour();
+        Collections.shuffle(candidates, new Random(seed));
+
+        return candidates.stream()
+                .limit(5)
+                .toList();
+    }
+
+    private List<String> getFallbackPopularKeywords() {
         List<String> popularKeywords = new ArrayList<>(POPULAR_KEYWORD_POOL);
 
         long seed = LocalDateTime.now().getDayOfYear() * 100L + LocalDateTime.now().getHour();
@@ -77,7 +119,7 @@ public class TrendService {
         popularKeywords.sort(Comparator.comparingInt(this::getPopularScore).reversed());
 
         return popularKeywords.stream()
-                .limit(6)
+                .limit(5)
                 .toList();
     }
 

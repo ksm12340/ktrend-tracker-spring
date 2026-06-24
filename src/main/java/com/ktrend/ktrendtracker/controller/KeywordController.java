@@ -51,6 +51,9 @@ public class KeywordController {
     @GetMapping("/keyword/compare")
     public String compare(
             @RequestParam(required = false) String keywords,
+            @RequestParam(defaultValue = "7d") String period,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
             Model model
     ) {
         if (keywords == null || keywords.isBlank()) {
@@ -73,7 +76,11 @@ public class KeywordController {
                 }
 
                 limitedKeywords.add(trimmedKeyword);
-                compareData.put(trimmedKeyword, trendService.getTrendData(trimmedKeyword));
+
+                compareData.put(
+                        trimmedKeyword,
+                        trendService.getTrendData(trimmedKeyword, period, startDate, endDate)
+                );
             }
         }
 
@@ -82,6 +89,9 @@ public class KeywordController {
         }
 
         model.addAttribute("keywords", String.join(",", limitedKeywords));
+        model.addAttribute("period", period);
+        model.addAttribute("startDate", startDate);
+        model.addAttribute("endDate", endDate);
         model.addAttribute("compareData", compareData);
 
         return "keyword/compare";
