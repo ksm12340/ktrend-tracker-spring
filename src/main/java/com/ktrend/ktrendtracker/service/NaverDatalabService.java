@@ -189,4 +189,92 @@ public class NaverDatalabService {
         headers.set("X-Naver-Client-Secret", clientSecret);
         return headers;
     }
+
+    public Map<String, List<TrendData>> getCompareTrendData(
+            List<Keyword> keywords,
+            LocalDate startDate,
+            LocalDate endDate
+    ) {
+        Map<String, List<TrendData>> compareData = new HashMap<>();
+
+        if (clientId.isBlank() || clientSecret.isBlank()) {
+            return compareData;
+        }
+
+        if (keywords == null || keywords.isEmpty()) {
+            return compareData;
+        }
+
+        List<Keyword> limitedKeywords = keywords.stream()
+                .limit(5)
+                .toList();
+
+        try {
+            String apiUrl = "https://openapi.naver.com/v1/datalab/search";
+
+            HttpHeaders headers = createHeaders();
+
+            List<Map<String, Object>> keywordGroups = new ArrayList<>();
+
+            for (Keyword keyword : limitedKeywords) {
+                keywordGroups.add(Map.of(
+                        "groupName", keyword.getKeywordName(),
+                        "keywords", List.of(keyword.getKeywordName())
+                ));
+            }
+
+            Map<String, Object> requestBody = Map.of(
+                    "startDate", startDate.toString(),
+                    "endDate", endDate.toString(),
+                    "timeUnit", "date",
+                    "keywordGroups", keywordGroups
+            );
+
+            HttpEntity<Map<String, Object>> request = new HttpEntity<>(requestBody, headers);
+
+            RestTemplate restTemplate = new RestTemplate();
+            ResponseEntity<String> response = restTemplate.exchange(
+                    apiUrl,
+                    HttpMethod.POST,
+                    request,
+                    String.class
+            );
+
+            JsonNode root = objectMapper.readTree(response.getBody());
+            JsonNode results = root.path("results");
+
+            for (JsonNode result : results) {
+                String keywordName = result.path("title").asText();
+                JsonNode dataArray = result.path("data");
+
+                Keyword matchedKeyword = limitedKeywords.stream()
+                        .filter(keyword -> keyword.getKeywordName().equals(keywordName))
+                        .findFirst()
+                        .orElseGet(() -> new Keyword(keywordName));
+
+                List<TrendData> trendDataList = new ArrayList<>();
+
+                for (JsonNode data : dataArray) {
+                    LocalDate trendDate = LocalDate.parse(data.path("period").asText());
+                    int interestValue = (int) Math.round(data.path("ratio").asDouble());
+
+                    trendDataList.add(new TrendData(
+                            matchedKeyword,
+                            trendDate,
+                            interestValue,
+                            "NAVER_DATALAB"
+                    ));
+                }
+
+                compareData.put(keywordName, trendDataList);
+            }
+
+            return compareData;
+
+        } catch (Exception e) {
+            System.out.println("네이버 데이터랩 비교 API 호출 실패");
+            e.printStackTrace();
+            return new HashMap<>();
+        }
+    }
 }
