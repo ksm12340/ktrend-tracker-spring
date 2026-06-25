@@ -64,8 +64,6 @@ public class KeywordController {
         List<String> limitedKeywords = new ArrayList<>();
         boolean overLimit = false;
 
-        Map<String, List<TrendData>> compareData = new LinkedHashMap<>();
-
         for (String keyword : keywordArray) {
             String trimmedKeyword = keyword.trim();
 
@@ -76,13 +74,16 @@ public class KeywordController {
                 }
 
                 limitedKeywords.add(trimmedKeyword);
-
-                compareData.put(
-                        trimmedKeyword,
-                        trendService.getTrendData(trimmedKeyword, period, startDate, endDate)
-                );
             }
         }
+
+        Map<String, List<TrendData>> compareData =
+                trendService.getCompareTrendData(
+                        limitedKeywords,
+                        period,
+                        startDate,
+                        endDate
+                );
 
         if (overLimit) {
             model.addAttribute("message", "키워드 비교는 최대 5개까지만 가능합니다. 앞의 5개만 비교했습니다.");

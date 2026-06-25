@@ -16,6 +16,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
+
 
 @Service
 @RequiredArgsConstructor
@@ -181,5 +184,64 @@ public class TrendService {
 
             trendDataRepository.save(trendData);
         }
+    }
+
+
+    public Map<String, List<TrendData>> getCompareTrendData(
+            List<String> keywordNames,
+            String period,
+            LocalDate startDate,
+            LocalDate endDate
+    ) {
+        LocalDate today = LocalDate.now();
+        LocalDate searchEndDate = today;
+        LocalDate searchStartDate = today.minusDays(getPeriodDays(period) - 1L);
+
+        if ("custom".equals(period) && startDate != null && endDate != null) {
+            searchStartDate = startDate;
+            searchEndDate = endDate;
+
+            if (searchStartDate.isAfter(searchEndDate)) {
+                LocalDate temp = searchStartDate;
+                searchStartDate = searchEndDate;
+                searchEndDate = temp;
+            }
+        }
+
+        List<Keyword> keywords = new ArrayList<>();
+
+        for (String keywordName : keywordNames) {
+            if (keywordName != null && !keywordName.isBlank()) {
+                Keyword keyword = findOrCreateKeyword(keywordName);
+                createSampleTrendDataIfNeeded(keyword);
+                keywords.add(keyword);
+            }
+        }
+
+        Map<String, List<TrendData>> naverCompareData =
+                naverDatalabService.getCompareTrendData(
+                        keywords,
+                        searchStartDate,
+                        searchEndDate
+                );
+
+        if (!naverCompareData.isEmpty()) {
+            return naverCompareData;
+        }
+
+        Map<String, List<TrendData>> fallbackData = new HashMap<>();
+
+        for (Keyword keyword : keywords) {
+            List<TrendData> trendDataList =
+                    trendDataRepository.findByKeywordAndTrendDateBetweenOrderByTrendDateAsc(
+                            keyword,
+                            searchStartDate,
+                            searchEndDate
+                    );
+
+            fallbackData.put(keyword.getKeywordName(), trendDataList);
+        }
+
+        return fallbackData;
     }
 }
