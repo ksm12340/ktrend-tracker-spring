@@ -620,6 +620,414 @@ tr:hover td {
     }
 
 
+    .custom-card {
+        background: #ffffff;
+        border-radius: 16px;
+        padding: 24px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        transition: all 0.3s ease;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+        border: 1px solid rgba(0, 0, 0, 0.03);
+        min-height: 120px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
 
+    .custom-card h3 {
+        margin: 0 0 8px 0;
+        font-size: 18px;
+        color: #333;
+        transition: color 0.3s ease;
+    }
 
+    .custom-card p {
+        margin: 0;
+        font-size: 14px;
+        color: #666;
+        transition: color 0.3s ease;
+    }
+
+    /* 호버 시 기존 네비게이션/버튼에 사용된 초록색(#00c73c 계열)으로 변경 */
+    .custom-card:not(.logged-out):hover {
+        background: #00b462; /* 기존 화면의 초록색 톤에 맞춤 */
+        transform: translateY(-4px);
+        box-shadow: 0 8px 25px rgba(0, 180, 98, 0.2);
+    }
+
+    .custom-card:not(.logged-out):hover h3,
+    .custom-card:not(.logged-out):hover p {
+        color: #ffffff;
+    }
+
+    /* 로그인하지 않았을 때 (비활성화 + 모자이크/블러 효과) */
+    .custom-card.logged-out {
+        cursor: not-allowed;
+        background: #f9f9f9;
+    }
+
+    .custom-card.logged-out .blur-content {
+        filter: blur(4px);
+        opacity: 0.4;
+        pointer-events: none;
+    }
+
+    /* 로그인 후 사용가능 안내 문구 오버레이 */
+    .custom-card.logged-out .login-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(0, 0, 0, 0.03);
+        color: #666;
+        font-weight: bold;
+        font-size: 15px;
+        letter-spacing: -0.5px;
+    }
+}
+
+/*
+   메인 페이지 전용 커스텀 스타일 (index.html에서 마이그레이션됨)
+*/
+.custom-card-container {
+    margin-top: 40px;
+    padding: 20px 0;
+}
+
+.custom-card {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(0, 0, 0, 0.03);
+    min-height: 120px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+}
+
+.card-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.card-icon {
+    width: 70px;
+    height: 70px;
+    object-fit: contain;
+    transition: transform 0.3s ease;
+}
+
+.custom-card h3 {
+    margin: 0 0 8px 0;
+    font-size: 18px;
+    color: #333;
+    transition: color 0.3s ease;
+}
+
+.custom-card p {
+    margin: 0;
+    font-size: 14px;
+    color: #666;
+    transition: color 0.3s ease;
+    font-weight: normal;
+}
+
+/* 모든 카드에 동일한 호버 효과 적용 */
+.custom-card:hover {
+    background: var(--naver-green, #03c75a);
+    transform: translateY(-4px);
+    box-shadow: 0 8px 25px rgba(3, 199, 90, 0.2);
+}
+
+.custom-card:hover h3,
+.custom-card:hover p {
+    color: #ffffff;
+}
+
+/* 호버 시 우측 아이콘이 1.1배 살짝 커지는 미세 애니메이션 */
+.custom-card:hover .card-icon {
+    transform: scale(1.1);
+}
+
+/* Google Trends Style Hero Search Section */
+.trends-hero {
+    text-align: center;
+    padding: 50px 24px;
+    background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+    border-radius: 20px;
+    margin-bottom: 35px;
+    border: 1px solid var(--border);
+    position: relative;
+}
+
+.trends-hero h1 {
+    font-size: 32px;
+    font-weight: 800;
+    color: #1e293b;
+    margin-bottom: 8px;
+    letter-spacing: -1px;
+}
+
+.trends-hero .subtitle {
+    font-size: 15px;
+    color: #64748b;
+    margin-bottom: 28px;
+    margin-top: 0;
+}
+
+.search-container {
+    max-width: 640px;
+    margin: 0 auto;
+}
+
+.search-container {
+    position: relative; /* ensure the dropdown anchors correctly */
+}
+
+.search-wrapper {
+    display: flex;
+    align-items: center;
+    background: #ffffff;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 999px;
+    padding: 4px 20px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.search-wrapper:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    border-color: #94a3b8;
+}
+
+.search-wrapper:focus-within {
+    box-shadow: 0 8px 30px rgba(3, 199, 90, 0.18), 0 0 0 4px rgba(3, 199, 90, 0.06);
+    border-color: var(--naver-green);
+    transform: translateY(-1px);
+}
+
+.search-icon-btn {
+    background: none !important;
+    border: none !important;
+    padding: 0 !important;
+    cursor: pointer !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    outline: none !important;
+    box-shadow: none !important;
+    height: auto !important;
+    margin: 0 !important;
+    transition: transform 0.2s ease !important;
+}
+
+.search-icon-btn:hover {
+    transform: scale(1.1) !important;
+    background: none !important;
+}
+
+.search-icon-svg {
+    width: 22px;
+    height: 22px;
+    fill: #64748b;
+    margin-right: 12px;
+    flex-shrink: 0;
+    transition: fill 0.25s ease;
+}
+
+.search-wrapper:focus-within .search-icon-svg {
+    fill: var(--naver-green);
+}
+
+.search-input {
+    border: none !important;
+    padding: 0 !important;
+    height: 46px !important;
+    font-size: 16px !important;
+    width: 100% !important;
+    background: transparent !important;
+    outline: none !important;
+    box-shadow: none !important;
+    color: #0f172a;
+}
+
+.search-input::placeholder {
+    color: #94a3b8;
+    transition: color 0.2s ease;
+}
+
+.search-input:focus::placeholder {
+    color: #cbd5e1;
+}
+
+/* 추천 태그 */
+.recommended-tags {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 8px;
+    margin-top: 12px;
+    padding-right: 15px;
+    font-size: 13px;
+}
+
+.tag-title {
+    color: #64748b;
+    font-weight: 600;
+}
+
+.tag-item {
+    color: var(--naver-green);
+    text-decoration: none;
+    font-weight: 700;
+    transition: all 0.2s ease;
+}
+
+.tag-item:hover {
+    color: var(--naver-green-dark);
+    text-decoration: underline;
+}
+
+/* 최근 검색어 & 추천 검색어 드롭다운 */
+.search-dropdown {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    right: 0;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+    z-index: 99;
+    overflow: hidden;
+    display: none;
+    text-align: left;
+}
+
+.dropdown-section {
+    padding: 16px 20px;
+}
+
+.dropdown-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.dropdown-header span {
+    font-size: 13px;
+    font-weight: 700;
+    color: #64748b;
+    letter-spacing: -0.3px;
+}
+
+.clear-history-btn {
+    background: none !important;
+    border: none !important;
+    padding: 0 !important;
+    color: #94a3b8 !important;
+    font-size: 12px !important;
+    font-weight: 500 !important;
+    cursor: pointer !important;
+    height: auto !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+}
+
+.clear-history-btn:hover {
+    color: #ef4444 !important;
+    background: none !important;
+    transform: none !important;
+}
+
+.dropdown-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.dropdown-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.dropdown-item:hover {
+    background: #f1f5f9;
+}
+
+.dropdown-item-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    color: #334155;
+    font-size: 14px;
+    font-weight: 600;
+    flex-grow: 1;
+}
+
+.dropdown-item-link:hover {
+    color: var(--naver-green);
+}
+
+.dropdown-item-icon {
+    font-size: 12px;
+    color: #94a3b8;
+}
+
+.remove-search-btn {
+    background: none !important;
+    border: none !important;
+    padding: 4px !important;
+    color: #94a3b8 !important;
+    cursor: pointer !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    height: auto !important;
+    border-radius: 4px !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+}
+
+.remove-search-btn:hover {
+    background: #e2e8f0 !important;
+    color: #475569 !important;
+    transform: none !important;
+}
+
+.dropdown-divider {
+    height: 1px;
+    background: #f1f5f9;
+}
+
+.dropdown-no-data {
+    font-size: 13px;
+    color: #94a3b8;
+    text-align: center;
+    padding: 12px 0;
 }
