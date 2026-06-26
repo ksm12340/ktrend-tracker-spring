@@ -534,6 +534,99 @@ tr:hover td {
     text-decoration: underline;
 }
 
+
+/* history 페이지 전용 */
+.history-container {
+    max-width: 900px;
+    margin: 20px auto;
+}
+
+/* 테이블 전체 */
+.history-table {
+    width: 100%;
+    border-collapse: separate; /* 중요 (둥근 모서리 위해) */
+    border-spacing: 0;
+    background: #fff;
+    border-radius: 12px; /* 둥글게 */
+    overflow: hidden; /* 모서리 적용 */
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+/* 헤더 */
+.history-table thead {
+    background-color: #f8fafc;
+}
+
+.history-table th {
+    font-size: 13px; /* 글씨 작게 */
+    font-weight: 600;
+    padding: 10px 12px; /* 간격 줄임 */
+    text-align: left;
+    border-bottom: 1px solid #e5e8eb;
+}
+
+/* 본문 */
+.history-table td {
+    font-size: 13px; /* 글씨 작게 */
+    padding: 8px 12px; /* 간격 줄임 */
+    border-bottom: 1px solid #f1f3f5;
+}
+
+/* 마지막 줄 선 제거 */
+.history-table tr:last-child td {
+    border-bottom: none;
+}
+
+/* hover 효과 (있으면 보기 좋음) */
+.history-table tbody tr:hover {
+    background-color: #f9fafb;
+}
+
+/* 돋보기 버튼 */
+.search-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background-color: #e9f9f0;
+    color: #03c75a;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+.search-btn:hover {
+    background-color: #03c75a;
+    color: #fff;
+}
+.view-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+}
+
+/* 컨테이너 자체를 가운데 */
+.mypage-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;   /* 🔥 핵심 */
+    margin-top: 40px;
+}
+
+/* 테이블 크기 고정 */
+.mypage-table {
+    width: 500px;              /* 🔥 고정해야 중앙 느낌 남 */
+    border-collapse: separate;
+    border-spacing: 0;
+    background: #fff;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+
 /*
    작은 화면 대응 */
 
@@ -764,7 +857,7 @@ tr:hover td {
     transform: scale(1.1);
 }
 
-/* Google Trends Style Hero Search Section */
+/* G Trends Style Hero Search Section */
 .trends-hero {
     text-align: center;
     padding: 50px 24px;
