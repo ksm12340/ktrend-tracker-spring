@@ -30,10 +30,17 @@ public class AuthController {
     }
 
     @GetMapping("/login")
-    public String loginForm(@RequestParam(value = "error", required = false) String error, Model model) {
-        if (error != null) {
+    public String loginForm(
+            @RequestParam(value = "error", required = false) String error,
+            @RequestParam(value = "errorMessage", required = false) String errorMessage,
+            Model model
+    ) {
+        if (errorMessage != null) {
+            model.addAttribute("errorMessage", errorMessage);
+        } else if (error != null) {
             model.addAttribute("errorMessage", "아이디 또는 비밀번호가 올바르지 않습니다.");
         }
+
         return "auth/login";
     }
 }
