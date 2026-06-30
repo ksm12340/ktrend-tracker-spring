@@ -31,7 +31,7 @@ public class TrendService {
     private static final int MAX_SAMPLE_DAYS = 365;
     private static final List<String> POPULAR_KEYWORD_POOL = List.of(
             "아이폰", "갤럭시", "손흥민", "AI", "부산 여행",
-            "뉴진스", "전기차", "챗GPT", "제주도", "취업",
+            "뉴진스", "전기차", "테슬라", "제주도", "취업",
             "야구", "웹툰", "무신사", "넷플릭스", "반도체"
     );
 

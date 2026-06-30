@@ -6,6 +6,8 @@
     <meta charset="UTF-8">
     <title>마이페이지 | K-Trend Tracker</title>
     <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/mypage.css">
+
 </head>
 <body>
 
@@ -18,9 +20,18 @@
                 <a href="/">홈</a>
                 <a href="/keyword/analysis">키워드 분석</a>
                 <a href="/keyword/compare">키워드 비교</a>
-                <a href="/favorites">관심 키워드</a>
-                <a href="/history">검색 기록</a>
-                <a href="/mypage">마이페이지</a>
+
+                <!-- 관심 키워드 -->
+                <a sec:authorize="isAuthenticated()" href="/favorites">관심 키워드</a>
+                <a sec:authorize="isAnonymous()" href="javascript:void(0);" onclick="alert('로그인 후 사용 가능합니다.'); location.href='/login';">관심 키워드</a>
+
+                <!-- 검색 기록 -->
+                <a sec:authorize="isAuthenticated()" href="/history">검색 기록</a>
+                <a sec:authorize="isAnonymous()" href="javascript:void(0);" onclick="alert('로그인 후 사용 가능합니다.'); location.href='/login';">검색 기록</a>
+
+                <!-- 마이페이지 -->
+                <a sec:authorize="isAuthenticated()" href="/mypage">마이페이지</a>
+                <a sec:authorize="isAnonymous()" href="javascript:void(0);" onclick="alert('로그인 후 사용 가능합니다.'); location.href='/login';">마이페이지</a>
             </div>
         </div>
 
@@ -37,26 +48,31 @@
 
 <hr>
 
-<h2 th:text="${user.name} + '님'">사용자님</h2>
+<!--<h2 th:text="${user.name} + '님'">사용자님</h2>-->
 
-<table border="1">
-    <tr>
-        <th>아이디</th>
-        <td th:text="${user.loginId}">abcd1234</td>
-    </tr>
-    <tr>
-        <th>이름</th>
-        <td th:text="${user.name}">김철수</td>
-    </tr>
-    <tr>
-        <th>이메일</th>
-        <td th:text="${user.email}">aaa@naver.com</td>
-    </tr>
-    <tr>
-        <th>가입일</th>
-        <td th:text="${#temporals.format(user.createdAt, 'yyyy-MM-dd')}">2026-06-18</td>
-    </tr>
-</table>
+<div class="mypage-container">
+
+    <table class="1">
+
+        <tr>
+            <th>아이디</th>
+            <td th:text="${user.loginId}">abcd1234</td>
+        </tr>
+        <tr>
+            <th>이름</th>
+            <td th:text="${user.name}">김철수</td>
+        </tr>
+        <tr>
+            <th>이메일</th>
+            <td th:text="${user.email}">aaa@naver.com</td>
+        </tr>
+        <tr>
+            <th>가입일</th>
+            <td th:text="${#temporals.format(user.createdAt, 'yyyy-MM-dd')}">2026-06-18</td>
+        </tr>
+    </table>
+
+</div>
 
 <br>
 

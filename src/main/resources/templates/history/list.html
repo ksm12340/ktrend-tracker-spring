@@ -6,6 +6,7 @@
     <meta charset="UTF-8">
     <title>검색 기록 | K-Trend Tracker</title>
     <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
 <nav class="top-nav">
@@ -17,9 +18,18 @@
                 <a href="/">홈</a>
                 <a href="/keyword/analysis">키워드 분석</a>
                 <a href="/keyword/compare">키워드 비교</a>
-                <a href="/favorites">관심 키워드</a>
-                <a href="/history">검색 기록</a>
-                <a href="/mypage">마이페이지</a>
+
+                <!-- 관심 키워드 -->
+                <a sec:authorize="isAuthenticated()" href="/favorites">관심 키워드</a>
+                <a sec:authorize="isAnonymous()" href="javascript:void(0);" onclick="alert('로그인 후 사용 가능합니다.'); location.href='/login';">관심 키워드</a>
+
+                <!-- 검색 기록 -->
+                <a sec:authorize="isAuthenticated()" href="/history">검색 기록</a>
+                <a sec:authorize="isAnonymous()" href="javascript:void(0);" onclick="alert('로그인 후 사용 가능합니다.'); location.href='/login';">검색 기록</a>
+
+                <!-- 마이페이지 -->
+                <a sec:authorize="isAuthenticated()" href="/mypage">마이페이지</a>
+                <a sec:authorize="isAnonymous()" href="javascript:void(0);" onclick="alert('로그인 후 사용 가능합니다.'); location.href='/login';">마이페이지</a>
             </div>
         </div>
 
@@ -36,31 +46,42 @@
 
 <hr>
 
-<table border="1">
-    <thead>
-    <tr>
-        <th>키워드</th>
-        <th>검색일시</th>
-        <th>다시검색</th>
-        <th>삭제</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="history : ${histories}">
-        <td th:text="${history.keyword.keywordName}">아이폰</td>
-        <td th:text="${#temporals.format(history.searchedAt, 'yyyy-MM-dd HH:mm')}">2026-06-18 21:00</td>
-        <td>
-            <a th:href="@{/keyword/analysis(keyword=${history.keyword.keywordName})}">보기</a>
-        </td>
-        <td>
-            <form action="/history/delete" method="post">
-                <input type="hidden" name="historyId" th:value="${history.historyId}">
-                <button type="submit">삭제</button>
-            </form>
-        </td>
-    </tr>
-    </tbody>
-</table>
+<div class="history-container">
+
+    <table class="1">
+        <thead>
+        <tr>
+            <th>키워드</th>
+            <th>검색일시</th>
+            <th>다시검색</th>
+            <th>삭제</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="history : ${histories}">
+            <td class="keyword" th:text="${history.keyword.keywordName}">아이폰</td>
+
+            <td th:text="${#temporals.format(history.searchedAt, 'yyyy-MM-dd HH:mm')}">
+                2026-06-18 21:00
+            </td>
+
+            <td>
+                <a class="btn view-btn"
+                   th:href="@{/keyword/analysis(keyword=${history.keyword.keywordName})}">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </a>
+            </td>
+
+            <td>
+                <form action="/history/delete" method="post">
+                    <input type="hidden" name="historyId" th:value="${history.historyId}">
+                    <button type="submit" class="btn delete-btn">삭제</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
 
 </body>
 </html>
