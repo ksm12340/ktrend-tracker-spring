@@ -6,8 +6,6 @@
     <meta charset="UTF-8">
     <title>마이페이지 | K-Trend Tracker</title>
     <link rel="stylesheet" href="/css/style.css">
-    <link rel="stylesheet" href="/css/mypage.css">
-
 </head>
 <body>
 
@@ -46,39 +44,66 @@
     </div>
 </nav>
 
-<hr>
+<div class="container">
+    <!-- Profile Section -->
+    <div class="profile-section">
+        <div class="profile-avatar" th:text="${#strings.substring(user.name, 0, 1)}">U</div>
+        <div class="profile-info">
+            <h2 class="profile-greeting" th:text="'안녕하세요, ' + ${user.name} + '님!'">안녕하세요, 사용자님!</h2>
+            <p class="profile-email" th:text="${user.email}">user@email.com</p>
+        </div>
+    </div>
 
-<!--<h2 th:text="${user.name} + '님'">사용자님</h2>-->
+    <!-- User Information Card -->
+    <div class="mypage-card">
+        <h3 class="mypage-card-title">
+            👤 계정 정보
+        </h3>
+        <table class="mypage-table">
+            <tr>
+                <th>아이디</th>
+                <td th:text="${user.loginId}">abcd1234</td>
+            </tr>
+            <tr>
+                <th>이름</th>
+                <td th:text="${user.name}">김철수</td>
+            </tr>
+            <tr>
+                <th>이메일</th>
+                <td th:text="${user.email}">aaa@naver.com</td>
+            </tr>
+            <tr>
+                <th>가입일</th>
+                <td th:text="${#temporals.format(user.createdAt, 'yyyy-MM-dd')}">2026-06-18</td>
+            </tr>
+        </table>
+    </div>
 
-<div class="mypage-container">
+    <!-- Activity Summary (Mini KPI Cards) -->
+    <h3 class="mypage-section-title">
+        📊 나의 활동 요약
+    </h3>
+    <div class="mypage-kpi-container">
+        <!-- Registered Favorite Keywords -->
+        <a href="/favorites" class="mypage-kpi-card">
+            <div class="mypage-kpi-info">
+                <h4>⭐ 관심 키워드</h4>
+                <p th:text="${favoriteCount} + '개'">0개</p>
+            </div>
+            <div class="mypage-kpi-arrow">바로가기 →</div>
+        </a>
 
-    <table class="1">
-
-        <tr>
-            <th>아이디</th>
-            <td th:text="${user.loginId}">abcd1234</td>
-        </tr>
-        <tr>
-            <th>이름</th>
-            <td th:text="${user.name}">김철수</td>
-        </tr>
-        <tr>
-            <th>이메일</th>
-            <td th:text="${user.email}">aaa@naver.com</td>
-        </tr>
-        <tr>
-            <th>가입일</th>
-            <td th:text="${#temporals.format(user.createdAt, 'yyyy-MM-dd')}">2026-06-18</td>
-        </tr>
-    </table>
-
+        <!-- Search History -->
+        <a href="/history" class="mypage-kpi-card">
+            <div class="mypage-kpi-info">
+                <h4>🕒 최근 검색 기록</h4>
+                <p th:text="${historyCount} + '건'">0건</p>
+            </div>
+            <div class="mypage-kpi-arrow">바로가기 →</div>
+        </a>
+    </div>
 </div>
 
-<br>
-
-<!--<form action="/logout" method="post">-->
-<!--    <button type="submit">로그아웃</button>-->
-<!--</form>-->
 
 </body>
 </html>

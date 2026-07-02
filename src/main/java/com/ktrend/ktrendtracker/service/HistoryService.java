@@ -48,6 +48,23 @@ public class HistoryService {
         searchHistoryRepository.delete(history);
     }
 
+    public void deleteAllHistories(CustomUserDetails userDetails) {
+        User user = getLoginUser(userDetails);
+        List<SearchHistory> histories = searchHistoryRepository.findByUserOrderBySearchedAtDesc(user);
+        searchHistoryRepository.deleteAll(histories);
+    }
+
+    public void deleteHistories(CustomUserDetails userDetails, List<Long> historyIds) {
+        User user = getLoginUser(userDetails);
+        List<SearchHistory> histories = searchHistoryRepository.findAllById(historyIds);
+        for (SearchHistory history : histories) {
+            if (!history.getUser().getUserId().equals(user.getUserId())) {
+                throw new IllegalArgumentException("삭제 권한이 없습니다.");
+            }
+        }
+        searchHistoryRepository.deleteAll(histories);
+    }
+
     private User getLoginUser(CustomUserDetails userDetails) {
         return userRepository.findById(userDetails.getUserId())
                 .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
