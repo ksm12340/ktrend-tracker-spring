@@ -6,7 +6,6 @@
     <meta charset="UTF-8">
     <title>검색 기록 | K-Trend Tracker</title>
     <link rel="stylesheet" href="/css/style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
 <nav class="top-nav">
@@ -44,44 +43,136 @@
     </div>
 </nav>
 
-<hr>
+<div class="container">
+    <div class="history-header-bar">
+        <div>
+            <h2 class="history-title">🕒 최근 검색 기록</h2>
+            <p class="history-subtitle">최근에 조회했던 검색 키워드 목록입니다. 중복된 연속 기록은 자동으로 묶어서 표시됩니다.</p>
+        </div>
 
-<div class="history-container">
+        <div class="history-actions">
+            <!-- Select Delete Button -->
+            <button type="button" class="btn-history-delete-selected" onclick="deleteSelectedHistories()">선택 삭제</button>
 
-    <table class="1">
-        <thead>
-        <tr>
-            <th>키워드</th>
-            <th>검색일시</th>
-            <th>다시검색</th>
-            <th>삭제</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="history : ${histories}">
-            <td class="keyword" th:text="${history.keyword.keywordName}">아이폰</td>
+            <!-- Delete All Form -->
+            <form action="/history/deleteAll" method="post" onsubmit="return confirm('모든 검색 기록을 영구히 삭제하시겠습니까?');" class="inline-form">
+                <button type="submit" class="btn-history-delete-all">전체 기록 삭제</button>
+            </form>
+        </div>
+    </div>
 
-            <td th:text="${#temporals.format(history.searchedAt, 'yyyy-MM-dd HH:mm')}">
-                2026-06-18 21:00
-            </td>
-
-            <td>
-                <a class="btn view-btn"
-                   th:href="@{/keyword/analysis(keyword=${history.keyword.keywordName})}">
-                    <i class="fa-solid fa-magnifying-glass"></i>
-                </a>
-            </td>
-
-            <td>
-                <form action="/history/delete" method="post">
-                    <input type="hidden" name="historyId" th:value="${history.historyId}">
-                    <button type="submit" class="btn delete-btn">삭제</button>
-                </form>
-            </td>
-        </tr>
-        </tbody>
-    </table>
+    <!-- History Table -->
+    <div class="table-responsive">
+        <table class="table-compact">
+            <thead>
+            <tr>
+                <th class="col-checkbox">
+                    <input type="checkbox" id="selectAllCheckbox" class="checkbox-custom">
+                </th>
+                <th class="text-left-p20 col-keyword">키워드</th>
+                <th class="text-left-p20 col-date">검색일시 (최근)</th>
+                <th class="col-action">다시검색</th>
+                <th class="col-action">삭제</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:if="${groupedHistories == null or groupedHistories.isEmpty()}">
+                <td colspan="5" class="table-no-data">
+                    검색한 기록이 존재하지 않습니다.
+                </td>
+            </tr>
+            <tr th:each="history : ${groupedHistories}">
+                <td class="col-checkbox">
+                    <input type="checkbox" class="history-checkbox checkbox-custom" th:value="${history.getHistoryIdsString()}">
+                </td>
+                <td class="text-left-p20 col-keyword">
+                    <span th:text="${history.keywordName}">아이폰</span>
+                    <span th:if="${history.count > 1}" th:text="' (' + ${history.count} + ')'" class="history-group-count"> (3)</span>
+                </td>
+                <td class="text-left-p20 col-date" th:text="${#temporals.format(history.searchedAt, 'yyyy-MM-dd HH:mm:ss')}">2026-06-18 21:00:22</td>
+                <td class="col-action">
+                    <a th:href="@{/keyword/analysis(keyword=${history.keywordName})}" class="btn-mini-re-search">🔄 재검색</a>
+                </td>
+                <td class="col-action">
+                    <form action="/history/deleteSelected" method="post" class="inline-form">
+                        <input type="hidden" name="historyIds" th:value="${history.getHistoryIdsString()}">
+                        <button type="submit" class="btn-mini-delete" onclick="return confirm('이 검색 기록을 삭제하시겠습니까?');">삭제</button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
 </div>
 
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const selectAllCheckbox = document.getElementById('selectAllCheckbox');
+        const checkboxes = document.querySelectorAll('.history-checkbox');
+
+        if (selectAllCheckbox) {
+            selectAllCheckbox.addEventListener('change', () => {
+                checkboxes.forEach(cb => {
+                    cb.checked = selectAllCheckbox.checked;
+                });
+            });
+        }
+
+        checkboxes.forEach(cb => {
+            cb.addEventListener('change', () => {
+                const totalChecked = document.querySelectorAll('.history-checkbox:checked').length;
+                if (selectAllCheckbox) {
+                    selectAllCheckbox.checked = (totalChecked === checkboxes.length);
+                }
+            });
+        });
+    });
+
+    function deleteSelectedHistories() {
+        const checkedBoxes = document.querySelectorAll('.history-checkbox:checked');
+        if (checkedBoxes.length === 0) {
+            alert('삭제할 검색 기록을 선택해 주세요.');
+            return;
+        }
+
+        if (!confirm('선택한 ' + checkedBoxes.length + '개의 기록을 삭제하시겠습니까?')) {
+            return;
+        }
+
+        // Collect all history IDs
+        let ids = [];
+        checkedBoxes.forEach(cb => {
+            const splitIds = cb.value.split(',');
+            splitIds.forEach(id => {
+                if (id) ids.push(id);
+            });
+        });
+
+        // Create form dynamically
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '/history/deleteSelected';
+
+        // Add CSRF token if present
+        const csrfTokenInput = document.querySelector('input[name="_csrf"]');
+        if (csrfTokenInput) {
+            const csrfClone = csrfTokenInput.cloneNode(true);
+            form.appendChild(csrfClone);
+        }
+
+        // Add historyIds inputs
+        ids.forEach(id => {
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'historyIds';
+            input.value = id;
+            form.appendChild(input);
+        });
+
+        document.body.appendChild(form);
+        form.submit();
+    }
+</script>
 </body>
 </html>
